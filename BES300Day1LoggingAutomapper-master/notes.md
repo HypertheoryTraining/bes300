@@ -20,6 +20,11 @@ docker run -p 8080:80 -e ConnectionStrings__shopping="server=172.17.69.145\sqlex
 
 ```
 
+### Some notes on SQL Server
+
+It creates a local volume, but it is deleted if the image is deleted.
+
+Looky here: [Sql Docker Volumes](https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-docker?view=sql-server-ver15#persist)
 ## Docker-Compose
 
 Show how to create a docker compose (included) - add the code to migrate the SQL Server stuff.
