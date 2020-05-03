@@ -11,7 +11,7 @@ namespace SimpleAPI.Services
     public class CurbsideChannel
     {
         private const int MaxMessagesInChannel = 100;
-        private readonly Channel<int> TheChannel;
+        private readonly Channel<CubsideChannelRequest> TheChannel;
         private readonly ILogger<CurbsideChannel> Logger;
 
         public CurbsideChannel(ILogger<CurbsideChannel> logger)
@@ -22,15 +22,15 @@ namespace SimpleAPI.Services
                 SingleWriter = false,
                 SingleReader = true
             };
-            TheChannel = Channel.CreateBounded<int>(options);
+            TheChannel = Channel.CreateBounded<CubsideChannelRequest>(options);
 
         }
 
-        public async Task<bool> AddCurbside(int orderId, CancellationToken ct = default)
+        public async Task<bool> AddCurbside(CubsideChannelRequest order, CancellationToken ct = default)
         {
             while( await TheChannel.Writer.WaitToWriteAsync(ct) && !ct.IsCancellationRequested)
             {
-                if(TheChannel.Writer.TryWrite(orderId))
+                if(TheChannel.Writer.TryWrite(order))
                 {
                     return true;
                 } 
@@ -39,6 +39,6 @@ namespace SimpleAPI.Services
             return false;
         }
 
-        public IAsyncEnumerable<int> ReadAllAsync(CancellationToken ct = default) => TheChannel.Reader.ReadAllAsync(ct);
+        public IAsyncEnumerable<CubsideChannelRequest> ReadAllAsync(CancellationToken ct = default) => TheChannel.Reader.ReadAllAsync(ct);
     }
 }

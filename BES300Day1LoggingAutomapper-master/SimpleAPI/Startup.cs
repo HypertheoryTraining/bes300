@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Converters;
 using Serilog;
 using SimpleAPI.Domain;
+using SimpleAPI.Hubs;
 using SimpleAPI.Services;
 
 namespace SimpleAPI
@@ -25,7 +26,7 @@ namespace SimpleAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-           
+
 
             Log.Logger = new LoggerConfiguration()
                     .ReadFrom.Configuration(configuration)
@@ -37,6 +38,16 @@ namespace SimpleAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder => 
+                builder.WithOrigins("http://localhost:4200")
+                
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+            });
+
             services.AddLogging();
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -60,11 +71,13 @@ namespace SimpleAPI
             services.AddSingleton<MapperConfiguration>(mappingConfig);
             services.AddSingleton<CurbsideChannel>();
             services.AddHostedService<CurbsideOrderProcessor>();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.UseCors("CorsPolicy");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -80,7 +93,11 @@ namespace SimpleAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<CurbsideHub>("/curbsidehub");
             });
+
+            
+            
         }
     }
 }

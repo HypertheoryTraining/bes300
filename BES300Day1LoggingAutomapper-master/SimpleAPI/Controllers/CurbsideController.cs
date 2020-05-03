@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Text.Json.Serialization;
 namespace SimpleAPI.Controllers
 {
     public class CurbsideController : ControllerBase
@@ -35,7 +35,7 @@ namespace SimpleAPI.Controllers
             // TODO - Notify
             try
             {
-                await theChannel.AddCurbside(order.Id);
+                await theChannel.AddCurbside(new CubsideChannelRequest {  OrderId = order.Id });
             } catch (OperationCanceledException ex)
             {
                 // cleanup;
@@ -70,6 +70,7 @@ namespace SimpleAPI.Controllers
         public int Id { get; set; }
         public string For { get; set; }
         public string Items { get; set; }
+       [JsonConverter(typeof(JsonStringEnumConverter))]
         public CurbsideOrderStatus Status { get; set; }
     }
 }

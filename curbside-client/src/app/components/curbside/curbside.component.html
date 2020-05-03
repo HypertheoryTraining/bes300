@@ -1,0 +1,23 @@
+<div>
+    <div class="form-group">
+        <label for="For">For</label>
+        <input class="form-control"
+               #for>
+
+    </div>
+    <div class="form-group">
+        <label for="Items">Items</label>
+        <input class="form-control"
+               #items>
+    </div>
+    <button class="btn btn-primary"
+            (click)="placeOrder(for, items)">Place Order</button>
+</div>
+<div *ngIf="(order$ | async)"
+     class="alert info">
+    <p>Order Id: {{(order$ | async)?.id}}</p>
+    <p>Order For: {{(order$ | async)?.for}}</p>
+    <p>Order Items: {{(order$ | async)?.items}}</p>
+    <p>Order Status: {{(order$ | async)?.status}}</p>
+
+</div>
