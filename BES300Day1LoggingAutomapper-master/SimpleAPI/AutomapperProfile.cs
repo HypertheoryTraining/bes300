@@ -13,6 +13,8 @@ namespace SimpleAPI
         public AutomapperProfile()
         {
             CreateMap<ShoppingItem, ShoppingItemsResponseItem>();
+            CreateMap<CurbsideOrderRequest, CurbsideOrder>();
+            CreateMap<CurbsideOrder, CurbsideOrderResponse>();
                 
         }
     }
